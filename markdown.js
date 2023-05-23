@@ -27,6 +27,8 @@ function updateCheckbox(checkbox) {
     var count = $(checkbox).data('count');
     var checked = $(checkbox).prop('checked');
     var text = $(checkbox).parent().data('text');
+    var url = $(checkbox).parent().data('url');
+    var name = $(checkbox).parent().data('name');
 
     var checkboxRegex = /- \[([ x])\]/g;
     var match;
@@ -38,10 +40,23 @@ function updateCheckbox(checkbox) {
         }
         i++;
     }
-    // temp
-    console.log(text);
-    $('.preview').html(text);
-    // end temp
 
     $(checkbox).parent().data('text', text);
+    $(checkbox).parent().html(parse(text));
+
+    var data = {};
+    data[name] = text;
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        success: function (data) {
+            if (data.success) {
+                console.log(data);
+            }
+        }, error: function (data) {
+            console.log(data);
+        }
+    });
 }
