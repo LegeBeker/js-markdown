@@ -6,19 +6,29 @@
 </head>
 
 <body>
+
+    <textarea class="preview" style="width: 100%; height: 100px;">
+- [x] This is a complete item
+- [ ] This is an incomplete item
+    </textarea>
     <div class="markdown" data-text="- [x] This is a complete item
 - [ ] This is an incomplete item" data-url="example/example/save-1/" data-name="description">
     </div>
-
-    <textarea class="preview" style="width: 100%; height: 100px;">
-
-    </textarea>
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
     <script src='markdown.js'></script>
     <script>
         $(document).ajaxSend(function () {
             $('.preview').html($(".markdown").data("text"));
+        });
+
+        $('.preview').on('input', function () {
+            console.log('input');
+            var text = $(this).val();
+
+            var result = parse(text);
+
+            $('.markdown').html(result);
         });
     </script>
 </body>
