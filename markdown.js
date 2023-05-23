@@ -11,16 +11,43 @@ $(document).ready(function () {
 });
 
 function parse(text) {
-    text = text.replace(/\n/g, '<br>');
+    text = text.replace(/^# (.*)$/gm, '<h1>$1</h1>');
+    text = text.replace(/^## (.*)$/gm, '<h2>$1</h2>');
+    text = text.replace(/^### (.*)$/gm, '<h3>$1</h3>');
+    text = text.replace(/^#### (.*)$/gm, '<h4>$1</h4>');
+    text = text.replace(/^##### (.*)$/gm, '<h5>$1</h5>');
+    text = text.replace(/^###### (.*)$/gm, '<h6>$1</h6>');
 
+    text = text.replace(/\*\*(.*)\*\*/g, '<strong>$1</strong>');
+    text = text.replace(/\*(.*)\*/g, '<em>$1</em>');
+
+    text = text.replace(/!\[(.*)\]\((.*)\)/g, '<img src="$2" alt="$1">');
+    text = text.replace(/\[(.*)\]\((.*)\)/g, '<a href="$2">$1</a>');
+
+    text = text.replace(/`(.*)`/g, '<code>$1</code>');
+
+    text = parseCheckbox(text);
+
+    text = text.replace(/^- (.*)$/gm, '<li>$1</li>');
+
+    text = text.replace(/(<li>.*<\/li>\n?)+/g, function (match) {
+        const items = match.split('\n').filter(Boolean).join('');
+        return '<ul>' + items + '</ul>';
+    });
+
+    text = text.replace(/([^<])\n/g, '$1<br>');
+    text = text.replace(/<li>(.*)<\/li><br>/g, '<li>$1</li>');
+
+    return text;
+}
+
+function parseCheckbox(text) {
     var checkboxCount = 0;
     var checkboxRegex = /- \[([ x])\]/g;
-    text = text.replace(checkboxRegex, function (match, checked) {
+    return text.replace(checkboxRegex, function (match, checked) {
         checkboxCount++;
         return '<input type="checkbox" data-count="' + checkboxCount + '" ' + (checked == 'x' ? 'checked' : '') + ' onchange="updateCheckbox(this)">';
     });
-
-    return text;
 }
 
 function updateCheckbox(checkbox) {
